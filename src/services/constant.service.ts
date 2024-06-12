@@ -6,4 +6,4 @@ class ConstantService {
     }
 }
 
-export default ConstantService
+export default ConstantService;
