@@ -1,4 +1,4 @@
-export const forgotPasswordTemp = async (name: string, otp: string) => {
+export const forgotPasswordTemp = (firstName: string, otp: string) => {
     const html = `
         <!DOCTYPE html>
         <html lang="en">
@@ -63,7 +63,7 @@ export const forgotPasswordTemp = async (name: string, otp: string) => {
             </header>
             <main>
                 <div class="container">
-                    <h2>Hi ${name},</h2>
+                    <h2>Hi ${firstName},</h2>
                     <p>Please click the below link to change your password</p>
                     <p>${otp}</p>
                 </div>
