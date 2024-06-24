@@ -8,3 +8,7 @@ export const hash = async (value: string): Promise<string> => {
 export const compare = async (value: string, hash: string): Promise<boolean> => {
   return bcryptCompare(value, hash);
 };
+
+export const generateRandomOTP = (): number => {
+  return Math.floor(1000 + Math.random() * 9000); // 4-digit OTP
+};
