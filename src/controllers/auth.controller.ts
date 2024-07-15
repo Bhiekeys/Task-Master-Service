@@ -52,7 +52,7 @@ class AuthController {
            
            const token: string = generateToken(tokenPayload, JWT_SECRET as string, JWT_EXPIRES as string);
 
-           const verificationLink = `http://localhost:${PORT}/api/v1/auth/verify?token=${token}`;        
+           const verificationLink = `https://task-master-service.onrender.com/api/v1/auth/verify?token=${token}`;        
 
            emitter.emit('verify-user', {email: formattedEmail, firstName, verificationLink});
 
