@@ -58,7 +58,7 @@ export const verifyUserTemp = (firstName: string, verificationLink: string) => {
           <body>
               <header>
                   <div class="container">
-                      <h1>Welcome to Sec-Flutter</h1>
+                      <h1>Welcome to Task Master Service</h1>
                   </div>
               </header>
               <main>

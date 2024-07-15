@@ -10,3 +10,11 @@ export interface IUserToken {
     email: string
     isVerified: boolean
 }
+
+export interface IUserReturnData {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+    isVerified: boolean
+}

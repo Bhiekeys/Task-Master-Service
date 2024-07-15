@@ -7,7 +7,7 @@ import { compare, generateRandomOTP, hash } from '../utils/hashes/hasher';
 import { generateToken, verifyToken } from '../utils/hashes/jwtHandler';
 import emitter from '../utils/email/eventListeners';
 import OTP, { IOTP } from '../models/otp.model';
-import { INewUser, IUserToken } from '../interfaces/user.interface';
+import { INewUser, IUserReturnData, IUserToken } from '../interfaces/user.interface';
 import ConstantService from '../services/constant.service';
 
 class AuthController {
@@ -68,7 +68,7 @@ class AuthController {
 
             if (!token) errorResponse(res, 'Invalid Request', 401);
             
-            const secretKey = process.env.JWT_VERIFICATION_SECRET as string;
+            const secretKey = process.env.JWT_SECRET as string;
             const decodedToken: IUserToken | any = verifyToken(token as string, secretKey);            
 
             const user: IUser | null = await ConstantService.findModelById(User, decodedToken.id);
@@ -108,9 +108,17 @@ class AuthController {
                 isVerified: user.isVerified
                };
                
-               const token: string = generateToken(tokenPayload, process.env.JWT_SECRET as string, process.env.JWT_EXPIRES as string);
+            const token: string = generateToken(tokenPayload, process.env.JWT_SECRET as string, process.env.JWT_EXPIRES as string);
 
-               return successResponse(res, 'logged in successfully', { data: token });
+            const ReturnUserData: IUserReturnData = {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                isVerified: user.isVerified
+            }
+
+            return successResponse(res, 'logged in successfully', { token, data: ReturnUserData });
         } catch (error: any) {
             errorResponse(res, error.message, 500);
         }
@@ -162,11 +170,11 @@ class AuthController {
             const otpModel: IOTP | null = await ConstantService.findModelByOne(OTP, { userId: user._id });
 
             //check if OTP has expired
-            if (!otpModel || new Date () > new Date(otpModel?.expiresAt)) {
+            if (!otpModel || new Date() > new Date(otpModel?.expiresAt)) {
                 if (otpModel) await OTP.deleteMany({ userId: user._id });
                 return errorResponse(res, 'OTP is expired or does not exists', 400);
             }
-            const isValidOTP = compare(otp, otpModel.otpToken as string);
+            const isValidOTP = await compare(otp, otpModel.otpToken as string);
 
             if (!isValidOTP) {
                 await OTP.deleteMany({ userId: user._id });
@@ -184,7 +192,7 @@ class AuthController {
             const { password, confirmPassword } = req.body;
             const { email, otpId } = req.params;
 
-            const requiredFields = ['password', 'confirmPassword', 'otp'];
+            const requiredFields = ['password', 'confirmPassword'];
 
             const validationErrors = requiredFields.filter(field => !req.body[field]);
 
