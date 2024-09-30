@@ -62,7 +62,7 @@ class AuthController {
         }
     }
 
-    static async verifyUser(req: Request, res: Response): Promise<Response> {
+    static async verifyUser(req: Request, res: Response) {
         try {
             let { token } = req.query;
 
@@ -81,7 +81,8 @@ class AuthController {
             // Update user's verification status
             await User.updateOne({_id: user._id}, {$set: { isVerified: true }});
 
-            return successResponse(res, `Hey ${user.firstName}, your account has been verified successfully`);
+            return res.redirect('https://task-master-web-app.vercel.app/auth/login');
+            // successResponse(res, `Hey ${user.firstName}, your account has been verified successfully`);
         } catch (error: any) {
            return errorResponse(res, error.message, 500);
         }
